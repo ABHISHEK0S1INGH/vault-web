@@ -3,7 +3,7 @@ package meety.services;
 import meety.dtos.PollRequestDto;
 import meety.dtos.PollResponseDto;
 import meety.exceptions.GroupNotFoundException;
-import meety.exceptions.UnauthorizedException;
+import meety.exceptions.NotMemberException;
 import meety.models.*;
 import meety.repositories.GroupMemberRepository;
 import meety.repositories.GroupRepository;
@@ -32,7 +32,7 @@ public class PollService {
 
     public Poll createPoll(Group group, User author, PollRequestDto pollDto) {
         if (groupMemberRepository.findByGroupAndUser(group, author).isEmpty()) {
-            throw new UnauthorizedException("User is not a member of the group");
+            throw new NotMemberException(group.getId(), author.getId());
         }
         Poll poll = Poll.builder()
                 .group(group)
@@ -58,7 +58,7 @@ public class PollService {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException("Group with id " + groupId + " not found"));
         if (groupMemberRepository.findByGroupAndUser(group, currentUser).isEmpty()) {
-            throw new UnauthorizedException("User is not a member of the group");
+            throw new NotMemberException(group.getId(), currentUser.getId());
         }
 
         return pollRepository.findByGroupId(groupId);
@@ -99,7 +99,7 @@ public class PollService {
                 .orElseThrow(() -> new GroupNotFoundException("Group with id " + groupId + " not found"));
 
         if (groupMemberRepository.findByGroupAndUser(group, user).isEmpty()) {
-            throw new UnauthorizedException("User is not a member of the group");
+            throw new NotMemberException(group.getId(), user.getId());
         }
 
         Poll poll = pollRepository.findById(pollId)
