@@ -33,19 +33,17 @@
         - 📄 [main](.git/logs/refs/heads/main)
       - 📁 **remotes**
         - 📁 **origin**
-          - 📄 [HEAD](.git/logs/refs/remotes/origin/HEAD)
           - 📄 [main](.git/logs/refs/remotes/origin/main)
   - 📁 **objects**
     - 📁 **pack**
-      - 📄 [pack-d7c607df9ae60a81cd25373a4a5f0e1286f828c8](.git/objects/pack/pack-d7c607df9ae60a81cd25373a4a5f0e1286f828c8.idx)
-      - 📄 [pack-d7c607df9ae60a81cd25373a4a5f0e1286f828c8](.git/objects/pack/pack-d7c607df9ae60a81cd25373a4a5f0e1286f828c8.pack)
-      - 📄 [pack-d7c607df9ae60a81cd25373a4a5f0e1286f828c8](.git/objects/pack/pack-d7c607df9ae60a81cd25373a4a5f0e1286f828c8.rev)
+      - 📄 [pack-0d27c21750875f9500704253733ec65f64ace35b](.git/objects/pack/pack-0d27c21750875f9500704253733ec65f64ace35b.idx)
+      - 📄 [pack-0d27c21750875f9500704253733ec65f64ace35b](.git/objects/pack/pack-0d27c21750875f9500704253733ec65f64ace35b.pack)
+      - 📄 [pack-0d27c21750875f9500704253733ec65f64ace35b](.git/objects/pack/pack-0d27c21750875f9500704253733ec65f64ace35b.rev)
   - 📁 **refs**
     - 📁 **heads**
       - 📄 [main](.git/refs/heads/main)
     - 📁 **remotes**
       - 📁 **origin**
-        - 📄 [HEAD](.git/refs/remotes/origin/HEAD)
         - 📄 [main](.git/refs/remotes/origin/main)
   - 📄 [shallow](.git/shallow)
 - 📁 **.github**
