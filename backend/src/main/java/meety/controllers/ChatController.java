@@ -30,4 +30,26 @@ public class ChatController {
                 savedMessage
         );
     }
+
+    @MessageMapping("/chat.private.send")
+    public void sendPrivateMessage(@Payload ChatMessageDto messageDto) {
+        ChatMessage savedMessage = chatService.saveMessage(messageDto);
+
+        String user1 = savedMessage.getPrivateChat().getUser1().getUsername();
+        String user2 = savedMessage.getPrivateChat().getUser2().getUsername();
+
+        messagingTemplate.convertAndSendToUser(
+                user1,
+                "/queue/private",
+                savedMessage
+        );
+
+        if (!user1.equals(user2)) {
+            messagingTemplate.convertAndSendToUser(
+                    user2,
+                    "/queue/private",
+                    savedMessage
+            );
+        }
+    }
 }

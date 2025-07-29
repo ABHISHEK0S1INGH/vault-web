@@ -20,11 +20,17 @@ public class ChatMessage {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "sender_id", nullable = false)
     private User sender;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = true)
     private Group group;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "private_chat_id", nullable = true)
+    private PrivateChat privateChat;
 
     private Instant timestamp;
 }
