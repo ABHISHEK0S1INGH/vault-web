@@ -45,6 +45,7 @@ export class PrivateChatDialogComponent implements OnInit, AfterViewChecked {
     this.chatService.getMessages(this.privateChatId).subscribe({
       next: (msgs) => {
         this.messages = msgs;
+        this.shouldScroll = true;
       },
       error: () => {
         console.error('Error loading messages for private chat');

@@ -1,14 +1,13 @@
-<div
-  class="fixed bottom-4 right-4 w-80 bg-white rounded-lg shadow-lg flex flex-col h-[500px]"
->
+<div class="fixed top-0 left-0 w-screen h-screen bg-white flex flex-col z-50">
   <!-- Header -->
   <div
-    class="px-4 py-3 border-b font-semibold text-gray-800 flex justify-between"
+    class="px-4 py-3 border-b font-semibold text-gray-800 flex justify-between items-center"
   >
-    <span>Chat with {{ username }}</span>
+    <span class="text-lg sm:text-xl">Chat with {{ username }}</span>
     <button
       (click)="onClose()"
-      class="text-gray-500 hover:text-red-500 text-xl leading-none"
+      class="text-gray-500 hover:text-red-500 text-2xl sm:text-3xl leading-none"
+      aria-label="Close chat"
     >
       ✕
     </button>
@@ -39,18 +38,18 @@
   </div>
 
   <!-- Input-Field -->
-  <form (submit)="sendMessage()" class="flex border-t">
+  <form (submit)="sendMessage()" class="flex border-t px-4 py-3">
     <input
       type="text"
       [(ngModel)]="newMessage"
       name="message"
-      class="flex-1 px-3 py-2 outline-none"
+      class="flex-1 px-3 py-2 outline-none border border-gray-300 rounded-l-md focus:border-blue-500 focus:ring focus:ring-blue-300"
       placeholder="Type a message..."
       autocomplete="off"
     />
     <button
       type="submit"
-      class="px-4 text-blue-600 hover:text-blue-800 font-bold"
+      class="px-5 bg-blue-600 text-white font-bold rounded-r-md hover:bg-blue-700 transition"
     >
       Send
     </button>
