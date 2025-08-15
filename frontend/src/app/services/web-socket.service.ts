@@ -69,7 +69,22 @@ export class WebSocketService {
         this.subscribeInternal(observer);
       }
 
-      return () => {};
+      let unsubscribeFn: (() => void) | undefined;
+
+      if (!this.connected) {
+        const connectCallback = () => {
+          unsubscribeFn = this.subscribeInternal(observer);
+        };
+        this.connectCallbacks.push(connectCallback);
+      } else {
+        unsubscribeFn = this.subscribeInternal(observer);
+      }
+
+      return () => {
+        if (unsubscribeFn) {
+          unsubscribeFn();
+        }
+      };
     });
   }
 
