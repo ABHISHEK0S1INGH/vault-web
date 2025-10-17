@@ -6,8 +6,6 @@ on:
       - "frontend/**"
       - ".github/workflows/frontend.yml"
   pull_request:
-    paths:
-      - "frontend/**"
 
 jobs:
   ci:
