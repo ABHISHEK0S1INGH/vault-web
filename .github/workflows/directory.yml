@@ -23,12 +23,30 @@ jobs:
           extensions: ".java,.html,.ts,.scss"
           show-extensions: true
 
-      - name: Commit and push changes
+      - name: Checkout or create Dependabot-style branch
         run: |
           git config --global user.name "$GITHUB_ACTOR"
           git config --global user.email "$GITHUB_ACTOR@users.noreply.github.com"
+          BRANCH_NAME=dependabot/directory-update
+
+          if git ls-remote --exit-code origin $BRANCH_NAME; then
+            git fetch origin $BRANCH_NAME
+            git checkout $BRANCH_NAME
+          else
+            git checkout -b $BRANCH_NAME
+          fi
+
+      - name: Commit changes
+        run: |
           git add DIRECTORY.md
           git diff --cached --quiet || git commit -m "Update DIRECTORY.md"
-          git push origin main
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create or update Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: dependabot/directory-update
+          base: main
+          title: "Bump directory structure (auto-generated)"
+          body: "This PR updates DIRECTORY.md automatically."
+          draft: false
