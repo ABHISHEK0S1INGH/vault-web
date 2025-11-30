@@ -2,20 +2,18 @@ package vaultWeb.services;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 import vaultWeb.dtos.ChatMessageDto;
 import vaultWeb.exceptions.notfound.GroupNotFoundException;
 import vaultWeb.exceptions.notfound.UserNotFoundException;
-import vaultWeb.models.ChatMessage;
-import vaultWeb.models.Group;
-import vaultWeb.models.PrivateChat;
-import vaultWeb.models.User;
-import vaultWeb.repositories.ChatMessageRepository;
-import vaultWeb.repositories.GroupRepository;
-import vaultWeb.repositories.PrivateChatRepository;
-import vaultWeb.repositories.UserRepository;
+import vaultWeb.models.*;
+import vaultWeb.repositories.*;
 import vaultWeb.security.EncryptionUtil;
 
+import java.io.IOException;
 import java.time.Instant;
+import java.time.OffsetDateTime;
 
 /**
  * Service responsible for handling chat-related operations.
@@ -43,6 +41,7 @@ public class ChatService {
     private final GroupRepository groupRepository;
     private final PrivateChatRepository privateChatRepository;
     private final EncryptionUtil encryptionUtil;
+    private final ChatImageRepo chatImageRepo;
 
     /**
      * Saves a chat message to a group or private chat.
@@ -122,5 +121,45 @@ public class ChatService {
         } catch (Exception e) {
             throw new RuntimeException("Decryption failed", e);
         }
+    }
+
+    public long uploadImage(MultipartFile image, ChatImage body, int receiver_id, int sender_id) throws IOException {
+        if (image == null || image.isEmpty()) {
+            throw new IllegalArgumentException("Image must not be empty");
+        }
+
+        ChatImage imageEntity = mapImagePayload(image, body, receiver_id, sender_id);
+        ChatImage saved = chatImageRepo.save(imageEntity);
+        return saved.getId();
+    }
+
+    public ChatImage getImage(Long id) {
+        return chatImageRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Chat image not found with id " + id));
+    }
+
+    private ChatImage mapImagePayload(MultipartFile image, ChatImage body, int receiver_id, int sender_id) throws IOException {
+        ChatImage result = body != null ? body : new ChatImage();
+
+        if (!StringUtils.hasText(result.getFileName())) {
+            result.setFileName(image.getOriginalFilename());
+        }
+        if (!StringUtils.hasText(result.getContentType())) {
+            result.setContentType(image.getContentType());
+        }
+        if (result.getCreatedOn() == null) {
+            result.setCreatedOn(OffsetDateTime.now());
+        }
+
+        // Ensure sender and receiver IDs are present on the entity
+        if (result.getSenderId() == null) {
+            result.setSenderId((long) sender_id);
+        }
+        if (result.getReceiverId() == null) {
+            result.setReceiverId((long) receiver_id);
+        }
+
+        result.setImageContent(image.getBytes());
+        return result;
     }
 }

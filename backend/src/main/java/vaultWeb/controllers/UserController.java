@@ -1,26 +1,41 @@
 package vaultWeb.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vaultWeb.dtos.user.UserDto;
 import vaultWeb.dtos.user.UserResponseDto;
+import vaultWeb.models.ChatImage;
 import vaultWeb.models.User;
+import vaultWeb.services.ChatService;
 import vaultWeb.services.UserService;
 import vaultWeb.services.auth.AuthService;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/auth")
 @Tag(name = "User Controller", description = "Handles registration and login of users")
 @RequiredArgsConstructor
 public class UserController {
-
+    private  final ChatService chatService;
     private final UserService userService;
     private final AuthService authService;
 
@@ -79,4 +94,53 @@ public class UserController {
                 .toList();
         return ResponseEntity.ok(users);
     }
+
+@PostMapping("/chatImageUpload")
+@Operation(
+        summary = "Upload user profile image",
+        description = "Accepts a multipart/form-data image and saves it for the authenticated user."
+)
+public ResponseEntity<String> uploadChatImage(@RequestPart("image") MultipartFile image,
+                                              Principal principal,
+                                              @Parameter ChatImage body ,@Parameter int sender_id, @Parameter int receiver_id) throws java.io.IOException {
+    if (image == null || image.isEmpty()) {
+        return ResponseEntity.badRequest().body("No image provided");
+    }
+    try {
+      long id = chatService.uploadImage(image, body,receiver_id, sender_id);
+        return ResponseEntity.ok("Image uploaded successfully with ID " + id);
+    }
+    catch (Exception e) {
+            return ResponseEntity.status(500).body("Error uploading image: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/chat-images/")
+    @Operation(
+            summary = "Fetch a chat image",
+            description = "Returns the stored chat image bytes for the provided ID."
+    )
+    public ResponseEntity<byte[]> getChatImage(@Parameter Long id) {
+        ChatImage chatImage = chatService.getImage(id);
+
+        HttpHeaders headers = new HttpHeaders();
+        if (StringUtils.hasText(chatImage.getContentType())) {
+            headers.setContentType(MediaType.parseMediaType(chatImage.getContentType()));
+        } else {
+            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        }
+        if (chatImage.getImageContent() != null) {
+            headers.setContentLength(chatImage.getImageContent().length);
+        }
+        if (StringUtils.hasText(chatImage.getFileName())) {
+            headers.setContentDisposition(ContentDisposition.inline()
+                    .filename(chatImage.getFileName())
+                    .build());
+        }
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(chatImage.getImageContent());
+    }
+
 }
