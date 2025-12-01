@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { filter } from 'rxjs/internal/operators/filter';
 import { NavbarComponent } from './navbar/navbar.component';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +14,10 @@ import { NavbarComponent } from './navbar/navbar.component';
 export class AppComponent {
   showNavbar = false;
 
-  constructor(private router: Router) {
+  constructor(
+    private router: Router,
+    private themeService: ThemeService,
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

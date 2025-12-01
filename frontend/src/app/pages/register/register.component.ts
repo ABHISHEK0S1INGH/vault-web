@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import {
   FormBuilder,
   Validators,
@@ -18,24 +18,33 @@ import {
   map,
   first,
 } from 'rxjs/operators';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-register',
+  standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss',
+  styleUrls: ['./register.component.scss'],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   submitted = false;
   errorMessage = '';
 
-  registerForm: ReturnType<FormBuilder['group']>;
+  registerForm!: ReturnType<FormBuilder['group']>;
+
+  // Password rule: 1 uppercase, 1 digit, 1 special char
+  private readonly PASSWORD_COMPLEXITY =
+    /(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+/;
 
   constructor(
     private fb: FormBuilder,
     private auth: AuthService,
     private router: Router,
-  ) {
+    private toastr: ToastrService,
+  ) {}
+
+  ngOnInit(): void {
     this.registerForm = this.fb.group(
       {
         username: [
@@ -46,7 +55,14 @@ export class RegisterComponent {
             updateOn: 'blur',
           },
         ],
-        password: ['', Validators.required],
+        password: [
+          '',
+          [
+            Validators.required,
+            Validators.minLength(8),
+            Validators.pattern(this.PASSWORD_COMPLEXITY),
+          ],
+        ],
         confirmPassword: ['', Validators.required],
       },
       { validators: this.passwordMatchValidator },
@@ -57,6 +73,7 @@ export class RegisterComponent {
     return this.registerForm.controls;
   }
 
+  // Validate password === confirmPassword
   passwordMatchValidator(group: AbstractControl) {
     const pw = group.get('password')?.value;
     const cpw = group.get('confirmPassword')?.value;
@@ -72,25 +89,24 @@ export class RegisterComponent {
     const { username, password } = this.registerForm.value;
 
     this.auth.register(username!, password!).subscribe({
-      next: (res) => {
-        console.log('Register success', res);
+      next: () => {
+        this.toastr.success('Registration successful! You can now login.');
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        console.error('Register error', err);
-        this.errorMessage =
-          err.error?.message || 'Registration failed. Please try again.';
+        this.toastr.error(
+          err.error?.message || 'Registration failed. Try again.',
+        );
       },
     });
   }
 
   usernameExistsValidator(authService: AuthService): AsyncValidatorFn {
     return (control): Observable<ValidationErrors | null> => {
-      if (!control.value) {
-        return of(null);
-      }
+      if (!control.value) return of(null);
+
       return of(control.value).pipe(
-        debounceTime(500),
+        debounceTime(400),
         distinctUntilChanged(),
         switchMap((username) => authService.checkUsernameExists(username)),
         map((exists) => (exists ? { usernameTaken: true } : null)),

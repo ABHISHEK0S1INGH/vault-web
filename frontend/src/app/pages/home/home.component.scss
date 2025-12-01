@@ -1,0 +1,36 @@
+/* Home Component Theme Styles */
+.max-w-xl {
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 3px var(--color-shadow);
+}
+
+h2 {
+  color: var(--color-text-primary);
+  border-bottom: 1px solid var(--color-border);
+}
+
+ul {
+  li {
+    border-color: var(--color-border);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+    }
+
+    span {
+      color: var(--color-text-primary);
+    }
+  }
+}
+
+.text-gray-400 {
+  color: var(--color-text-muted);
+}
+
+.text-gray-800 {
+  color: var(--color-text-primary);
+}
+
+.w-10.h-10 {
+  background-color: var(--color-primary);
+}

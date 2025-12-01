@@ -1,30 +1,107 @@
-<nav class="bg-white shadow-md fixed w-full z-50">
+<nav class="navbar-bg shadow-md fixed w-full z-50">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
     <div class="flex justify-between h-15 items-center">
       <!-- Logo -->
-      <div class="flex-shrink-0 text-xl font-semibold text-gray-800">
+      <div class="flex-shrink-0 text-xl font-semibold navbar-text-primary">
         Vault-Web
       </div>
 
-      <!-- Desktop Links -->
-      <div class="hidden md:flex space-x-6">
-        <a routerLink="/" class="text-gray-700 hover:text-blue-600">Home</a>
-        <a routerLink="/cloud" class="text-gray-700 hover:text-blue-600"
-          >Cloud</a
+      <!-- Desktop Links and Theme Toggle -->
+      <div class="hidden md:flex space-x-6 items-center">
+        <a routerLink="/" class="navbar-link">Home</a>
+        <a routerLink="/cloud" class="navbar-link">Cloud</a>
+        <a routerLink="/passwords" class="navbar-link">Password Manager</a>
+        <a routerLink="/profile" class="navbar-link">Profile</a>
+
+        <!-- Theme Toggle Button -->
+        <button
+          (click)="toggleTheme()"
+          class="theme-toggle-btn ml-2"
+          [title]="isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'"
         >
-        <a routerLink="/passwords" class="text-gray-700 hover:text-blue-600"
-          >Password Manager</a
-        >
-        <a routerLink="/profile" class="text-gray-700 hover:text-blue-600"
-          >Profile</a
-        >
+          <!-- Sun Icon (Light Mode) -->
+          <svg
+            *ngIf="isDarkTheme"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <!-- Moon Icon (Dark Mode) -->
+          <svg
+            *ngIf="!isDarkTheme"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
       </div>
 
-      <!-- Mobile Hamburger -->
-      <div class="md:hidden">
+      <!-- Mobile Hamburger and Theme Toggle -->
+      <div class="md:hidden flex items-center space-x-3">
+        <!-- Mobile Theme Toggle -->
+        <button
+          (click)="toggleTheme()"
+          class="theme-toggle-btn"
+          [title]="isDarkTheme ? 'Switch to light mode' : 'Switch to dark mode'"
+        >
+          <svg
+            *ngIf="isDarkTheme"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+          </svg>
+          <svg
+            *ngIf="!isDarkTheme"
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+          </svg>
+        </button>
+
+        <!-- Hamburger Menu -->
         <button
           (click)="toggleMobileMenu()"
-          class="text-gray-700 focus:outline-none"
+          class="navbar-text-secondary focus:outline-none"
         >
           <svg
             class="w-6 h-6"
@@ -44,32 +121,26 @@
   </div>
 
   <!-- Mobile Menu Overlay -->
-  <div
-    *ngIf="isMobileMenuOpen"
-    class="md:hidden bg-white border-t border-gray-200 px-4 pt-4"
-  >
-    <a
-      routerLink="/"
-      (click)="closeMobileMenu()"
-      class="block py-2 text-gray-700 hover:text-blue-600"
+  <div *ngIf="isMobileMenuOpen" class="md:hidden mobile-menu px-4 pt-4">
+    <a routerLink="/" (click)="closeMobileMenu()" class="mobile-link block py-2"
       >Home</a
     >
     <a
       routerLink="/cloud"
       (click)="closeMobileMenu()"
-      class="block py-2 text-gray-700 hover:text-blue-600"
+      class="mobile-link block py-2"
       >Cloud</a
     >
     <a
       routerLink="/passwords"
       (click)="closeMobileMenu()"
-      class="block py-2 text-gray-700 hover:text-blue-600"
+      class="mobile-link block py-2"
       >Password Manager</a
     >
     <a
       routerLink="/profile"
       (click)="closeMobileMenu()"
-      class="block py-2 text-gray-700 hover:text-blue-600"
+      class="mobile-link block py-2"
       >Profile</a
     >
   </div>
