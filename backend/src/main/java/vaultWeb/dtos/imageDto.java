@@ -11,7 +11,8 @@ public class imageDto {
     private Long id;
     private String file_name;
     private String content_type; // image/png, image/jpeg, etc.
-    private int sender_id;
+    @Column(name = "sender_id")
+    private int senderId;
     private byte[] data;
 }
 
