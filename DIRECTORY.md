@@ -11,6 +11,7 @@
           - 📄 [CorsConfig.java](backend/src/main/java/vaultWeb/config/CorsConfig.java)
           - 📄 [EncryptionConfig.java](backend/src/main/java/vaultWeb/config/EncryptionConfig.java)
           - 📄 [OpenApiConfig.java](backend/src/main/java/vaultWeb/config/OpenApiConfig.java)
+          - 📄 [SecurityConfig.java](backend/src/main/java/vaultWeb/config/SecurityConfig.java)
           - 📁 **websocket**
             - 📄 [JwtHandshakeInterceptor.java](backend/src/main/java/vaultWeb/config/websocket/JwtHandshakeInterceptor.java)
             - 📄 [WebSocketConfig.java](backend/src/main/java/vaultWeb/config/websocket/WebSocketConfig.java)
@@ -64,7 +65,6 @@
           - 📄 [EncryptionUtil.java](backend/src/main/java/vaultWeb/security/EncryptionUtil.java)
           - 📄 [JwtAuthFilter.java](backend/src/main/java/vaultWeb/security/JwtAuthFilter.java)
           - 📄 [JwtUtil.java](backend/src/main/java/vaultWeb/security/JwtUtil.java)
-          - 📄 [SecurityConfig.java](backend/src/main/java/vaultWeb/security/SecurityConfig.java)
           - 📁 **annotations**
             - 📄 [AdminOnly.java](backend/src/main/java/vaultWeb/security/annotations/AdminOnly.java)
           - 📁 **aspects**

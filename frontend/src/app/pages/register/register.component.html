@@ -1,93 +1,90 @@
-<div class="flex items-center justify-center min-h-screen bg-gray-100 px-4">
+<div class="flex justify-center items-center min-h-screen bg-gray-100 p-4">
   <form
     [formGroup]="registerForm"
     (ngSubmit)="onSubmit()"
-    class="w-full max-w-md p-6 bg-white rounded-lg shadow"
+    class="w-full max-w-md bg-white p-6 rounded shadow"
   >
-    <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">Register</h2>
+    <h2 class="text-2xl font-bold text-center mb-6">Register</h2>
 
-    <!-- Username -->
-    <label for="username" class="block font-semibold mb-1">Username</label>
+    <!-- USERNAME -->
+    <label for="username" class="font-semibold">Username</label>
     <input
       id="username"
-      formControlName="username"
       type="text"
-      class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1"
-      [ngClass]="{ 'border-red-500': submitted && f['username'].errors }"
+      formControlName="username"
+      class="w-full border px-3 py-2 rounded"
     />
-    <div *ngIf="submitted && f['username'].errors" class="text-red-500 text-sm">
+
+    <!-- USERNAME ERRORS -->
+    <div
+      class="text-red-600 text-sm mt-1"
+      *ngIf="
+        (submitted || f['username'].touched) &&
+        f['username'].errors?.['required']
+      "
+    >
       Username is required.
     </div>
     <div
-      *ngIf="f['username'].errors?.['usernameTaken']"
-      class="text-red-500 text-sm"
-    >
-      Username already taken.
-    </div>
-    <!-- Password -->
-    <label for="password" class="block font-semibold mb-1 mt-4">Password</label>
-    <input
-      id="password"
-      formControlName="password"
-      type="password"
-      class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1"
-      [ngClass]="{ 'border-red-500': submitted && f['password'].errors }"
-    />
-    <div *ngIf="submitted && f['password'].errors" class="text-red-500 text-sm">
-      Password is required.
-    </div>
-
-    <!-- Confirm Password -->
-    <label for="confirmPassword" class="block font-semibold mb-1 mt-4"
-      >Confirm Password</label
-    >
-    <input
-      id="confirmPassword"
-      formControlName="confirmPassword"
-      type="password"
-      class="w-full px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 mb-1"
-      [ngClass]="{
-        'border-red-500':
-          submitted &&
-          (f['confirmPassword'].errors || registerForm.errors?.['mismatch']),
-      }"
-    />
-    <div
+      class="text-red-600 text-sm mt-1"
       *ngIf="
-        (submitted ||
-          f['confirmPassword'].touched ||
-          f['confirmPassword'].dirty) &&
-        (f['confirmPassword'].errors || registerForm.errors?.['mismatch'])
-      "
-      class="text-red-500 text-sm"
-    >
-      {{
-        registerForm.errors?.["mismatch"]
-          ? "Passwords do not match."
-          : "Confirmation is required."
-      }}
-    </div>
-    <div *ngIf="errorMessage" class="mt-4 text-red-600 font-semibold">
-      {{ errorMessage }}
-    </div>
-
-    <button
-      type="submit"
-      class="mt-6 w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded transition disabled:opacity-50 disabled:cursor-not-allowed"
-      [disabled]="
-        registerForm.invalid ||
-        f['username'].pending ||
+        (submitted || f['username'].touched) &&
         f['username'].errors?.['usernameTaken']
       "
     >
+      Username is already taken.
+    </div>
+
+    <!-- PASSWORD -->
+    <label for="password" class="font-semibold mt-4 block">Password</label>
+    <input
+      id="password"
+      type="password"
+      formControlName="password"
+      class="w-full border px-3 py-2 rounded"
+    />
+
+    <div class="text-red-600 text-sm mt-1" *ngIf="f['password'].touched">
+      <div *ngIf="f['password'].errors?.['required']">
+        Password is required.
+      </div>
+      <div *ngIf="f['password'].errors?.['minlength']">
+        Minimum 8 characters required.
+      </div>
+      <div *ngIf="f['password'].errors?.['pattern']">
+        Must include: 1 uppercase, 1 digit, 1 special character.
+      </div>
+    </div>
+
+    <!-- CONFIRM PASSWORD -->
+    <label for="confirmPassword" class="font-semibold mt-4 block">
+      Confirm Password
+    </label>
+    <input
+      id="confirmPassword"
+      type="password"
+      formControlName="confirmPassword"
+      class="w-full border px-3 py-2 rounded"
+    />
+
+    <div
+      class="text-red-600 text-sm mt-1"
+      *ngIf="
+        (submitted || f['confirmPassword'].touched) &&
+        registerForm.errors?.['mismatch']
+      "
+    >
+      Passwords do not match.
+    </div>
+
+    <!-- SUBMIT BUTTON -->
+    <button
+      class="w-full bg-blue-600 text-white p-2 rounded mt-6 disabled:opacity-50"
+      [disabled]="registerForm.invalid"
+    >
       Register
     </button>
-
-    <div class="mt-4 text-center text-sm text-gray-600">
-      Already registered?
-      <a routerLink="/login" class="text-blue-600 underline hover:text-blue-800"
-        >Login</a
-      >
-    </div>
   </form>
 </div>
+
+//

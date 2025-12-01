@@ -1,0 +1,68 @@
+/* Cloud Component Theme Styles */
+.cloud-container {
+  background-color: var(--color-background-secondary);
+  min-height: 100vh;
+}
+
+/* Buttons */
+button {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+  border: 1px solid var(--color-border);
+
+  &:hover {
+    background-color: var(--color-surface-hover);
+  }
+}
+
+/* Table Styles */
+table {
+  background-color: var(--color-surface);
+  color: var(--color-text-primary);
+
+  thead {
+    background-color: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--color-border);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+    }
+  }
+}
+
+/* Modal Styles */
+.modal-overlay {
+  background-color: var(--color-surface);
+
+  input,
+  textarea {
+    background-color: var(--color-input-bg);
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-input-border);
+
+    &:focus {
+      border-color: var(--color-input-focus-border);
+      outline: none;
+    }
+  }
+}
+
+/* Dropdown */
+.dropdown-menu {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  box-shadow: 0 4px 6px var(--color-shadow);
+
+  button,
+  label {
+    color: var(--color-text-primary);
+
+    &:hover {
+      background-color: var(--color-surface-hover);
+    }
+  }
+}

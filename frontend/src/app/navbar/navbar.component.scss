@@ -1,5 +1,70 @@
+/* Navbar Styles with Theme Support */
+.navbar-bg {
+  background-color: var(--color-navbar-bg);
+  box-shadow: 0 1px 3px var(--color-navbar-shadow);
+}
+
+.navbar-text-primary {
+  color: var(--color-text-primary);
+}
+
+.navbar-text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.navbar-link {
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.mobile-menu {
+  background-color: var(--color-navbar-bg);
+  border-top: 1px solid var(--color-border);
+}
+
+.mobile-link {
+  color: var(--color-text-secondary);
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary);
+  }
+}
+
+.theme-toggle-btn {
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  color: var(--color-text-secondary);
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--color-primary);
+    background-color: var(--color-surface-hover);
+  }
+
+  &:focus {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+  }
+
+  svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
 @media (max-width: 768px) {
-  nav {
-    box-shadow: 1px 5px 10px rgba(236, 37, 37, 0.05);
+  .navbar-bg {
+    box-shadow: 1px 5px 10px var(--color-navbar-shadow);
   }
 }
