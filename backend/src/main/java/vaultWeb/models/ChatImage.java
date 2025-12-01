@@ -39,7 +39,6 @@ public class ChatImage {
     @Column(name = "receiver_id")
     private Long receiverId;
 
-    @JdbcTypeCode(SqlTypes.BINARY)
-    @Column(name = "image_content", columnDefinition = "bytea")
-    private byte[] imageContent;
+    @Column(name = "image_path")
+    private String imagePath;
 }
