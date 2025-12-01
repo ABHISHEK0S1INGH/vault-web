@@ -97,8 +97,8 @@ public class UserController {
 
 @PostMapping("/chatImageUpload")
 @Operation(
-        summary = "Upload user profile image",
-        description = "Accepts a multipart/form-data image and saves it for the authenticated user."
+        summary = "Upload chat image",
+        description = "Accepts a multipart/form-data image and saves it as a chat image between the sender and receiver."
 )
 public ResponseEntity<String> uploadChatImage(@RequestPart("image") MultipartFile image,
                                               Principal principal,
