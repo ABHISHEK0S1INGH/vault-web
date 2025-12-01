@@ -102,12 +102,12 @@ public class UserController {
 )
 public ResponseEntity<String> uploadChatImage(@RequestPart("image") MultipartFile image,
                                               Principal principal,
-                                              @Parameter ChatImage body ,@Parameter int sender_id, @Parameter int receiver_id) throws java.io.IOException {
+                                              @RequestParam int sender_id, @RequestParam int receiver_id) throws java.io.IOException {
     if (image == null || image.isEmpty()) {
         return ResponseEntity.badRequest().body("No image provided");
     }
     try {
-      long id = chatService.uploadImage(image, body,receiver_id, sender_id);
+        long id = chatService.uploadImage(image, receiver_id, sender_id);
         return ResponseEntity.ok("Image uploaded successfully with ID " + id);
     }
     catch (Exception e) {
