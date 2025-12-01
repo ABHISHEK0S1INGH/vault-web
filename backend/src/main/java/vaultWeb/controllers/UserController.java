@@ -115,12 +115,12 @@ public ResponseEntity<String> uploadChatImage(@RequestPart("image") MultipartFil
         }
     }
 
-    @GetMapping("/chat-images/")
+    @GetMapping("/chat-images/{id}")
     @Operation(
             summary = "Fetch a chat image",
             description = "Returns the stored chat image bytes for the provided ID."
     )
-    public ResponseEntity<byte[]> getChatImage(@Parameter Long id) {
+    public ResponseEntity<byte[]> getChatImage(@Parameter @PathVariable Long id) {
         ChatImage chatImage = chatService.getImage(id);
 
         HttpHeaders headers = new HttpHeaders();
