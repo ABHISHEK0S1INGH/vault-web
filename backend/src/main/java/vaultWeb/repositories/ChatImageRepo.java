@@ -1,18 +1,17 @@
 package vaultWeb.repositories;
 
-import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import vaultWeb.dtos.ChatImageDto;
+import vaultWeb.models.ChatImage;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 
 @Repository
-public interface ChatImageRepo extends CrudRepository<ChatImageDto, Long> {
+public interface ChatImageRepo extends CrudRepository<ChatImage, Long> {
 
 
     @Transactional
@@ -28,5 +27,5 @@ public interface ChatImageRepo extends CrudRepository<ChatImageDto, Long> {
             @Param("createdon") OffsetDateTime createdon
     );
 
-    List<ChatImageDto> createdon(OffsetDateTime createdon);
+    List<ChatImage> createdon(OffsetDateTime createdon);
 }

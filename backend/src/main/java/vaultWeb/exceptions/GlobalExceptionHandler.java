@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import vaultWeb.exceptions.notfound.GroupNotFoundException;
 import vaultWeb.exceptions.notfound.NotMemberException;
 import vaultWeb.exceptions.notfound.UserNotFoundException;
@@ -105,6 +106,18 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(PollOptionNotFoundException.class)
   public ResponseEntity<String> handlePollOptionNotFound(PollOptionNotFoundException ex) {
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Poll error: " + ex.getMessage());
+  }
+
+  /** Handles IllegalArgumentException (validation failures) and returns 400 Bad Request. */
+  @ExceptionHandler(IllegalArgumentException.class)
+  public ResponseEntity<String> handleIllegalArgument(IllegalArgumentException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Bad request: " + ex.getMessage());
+  }
+
+  /** Handles MaxUploadSizeExceededException (multipart too large) and returns 400 Bad Request. */
+  @ExceptionHandler(MaxUploadSizeExceededException.class)
+  public ResponseEntity<String> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File too large: " + ex.getMessage());
   }
 
   /** Handles any other RuntimeException and returns 500 Internal Server Error. */

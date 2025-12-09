@@ -2,6 +2,8 @@ package vaultWeb.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -74,20 +76,6 @@ public class UserController {
     List<UserResponseDto> users =
         userService.getAllUsers().stream().map(UserResponseDto::new).toList();
     return ResponseEntity.ok(users);
-  }
-
-  @PostMapping("/upload-image")
-  @Operation(
-          summary = "Upload Chat Image",
-          description = "Uploads an image to be used in chat messages.")
-  public ResponseEntity<String> uploadChatImage(@RequestParam("image") MultipartFile imageBytes, @RequestParam Integer senderUserId,
-                                                @RequestParam Integer receiverUserId) throws Exception {
-
-    // change MultipartFile to byte[]
-    byte[] imageByteArray = imageBytes.getBytes();
-
-    String imageRef = userService.uploadChatImage(imageByteArray,senderUserId,receiverUserId);
-    return ResponseEntity.ok(imageRef);
   }
 
 }

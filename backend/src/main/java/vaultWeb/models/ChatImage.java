@@ -1,4 +1,4 @@
-package vaultWeb.dtos;
+package vaultWeb.models;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +11,7 @@ import java.time.OffsetDateTime;
 @Getter
 @Setter
 @Table(name = "chat_images")
-public class ChatImageDto {
+public class ChatImage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
