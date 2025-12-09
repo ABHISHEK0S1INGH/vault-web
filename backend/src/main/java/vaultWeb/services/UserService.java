@@ -67,14 +67,4 @@ public class UserService {
   public List<User> getAllUsers() {
     return userRepository.findAll();
   }
-  private final ChatImageRepo chatImageRepo;
-
-  public String uploadChatImage(byte[] imageBytes, Integer senderUserId, Integer receiverUserId){
-    // Use native insert with explicit bytea cast to avoid driver/type mismatch issues
-
-    OffsetDateTime createdon = OffsetDateTime.now();
-    chatImageRepo.saveImage(imageBytes, senderUserId, receiverUserId, createdon);
-
-    return "Image uploaded successfully";
-  }
 }
