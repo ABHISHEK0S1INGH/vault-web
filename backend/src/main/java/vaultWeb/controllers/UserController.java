@@ -80,14 +80,14 @@ public class UserController {
   @Operation(
           summary = "Upload Chat Image",
           description = "Uploads an image to be used in chat messages.")
-  public ResponseEntity<String> uploadChatImage(@RequestParam("image") MultipartFile imageBytes, @RequestParam Integer senderUserId,
+  public ResponseEntity<Map<String, String>> uploadChatImage(@RequestParam("image") MultipartFile imageBytes, @RequestParam Integer senderUserId,
                                                 @RequestParam Integer receiverUserId) throws Exception {
 
     // change MultipartFile to byte[]
     byte[] imageByteArray = imageBytes.getBytes();
 
     String imageUrl = userService.uploadChatImage(imageByteArray,senderUserId,receiverUserId);
-    return ResponseEntity.ok(imageUrl);
+    return ResponseEntity.ok(Map.of("imageUrl", imageUrl));
   }
 
 }
