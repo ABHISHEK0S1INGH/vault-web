@@ -14,14 +14,14 @@ import java.util.List;
 @Repository
 public interface ChatImageRepo extends CrudRepository<ChatImageDto, Long> {
 
-    @Modifying
+
     @Transactional
     @Query(
-            value = "INSERT INTO chat_images (image_content, receiver_id, sender_id,createdon) " +
-                    "VALUES (CAST(:imageData AS bytea), :receiverId, :senderId, :createdon)",
+            value = "INSERT INTO chat_images (image_content, receiver_id, sender_id, createdon) " +
+                    "VALUES (CAST(:imageData AS bytea), :receiverId, :senderId, :createdon) RETURNING id",
             nativeQuery = true
     )
-    void saveImage(
+    Long saveImage(
             @Param("imageData") byte[] imageData,
             @Param("senderId") Integer senderId,
             @Param("receiverId") Integer receiverId,

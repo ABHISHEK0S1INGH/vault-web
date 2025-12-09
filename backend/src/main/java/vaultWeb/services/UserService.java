@@ -73,8 +73,8 @@ public class UserService {
     // Use native insert with explicit bytea cast to avoid driver/type mismatch issues
 
     OffsetDateTime createdon = OffsetDateTime.now();
-    chatImageRepo.saveImage(imageBytes, senderUserId, receiverUserId, createdon);
+    Long Ref = chatImageRepo.saveImage(imageBytes, senderUserId, receiverUserId, createdon);
 
-    return "Image uploaded successfully";
+    return "Image uploaded successfully with ref ID: " + Ref;
   }
 }

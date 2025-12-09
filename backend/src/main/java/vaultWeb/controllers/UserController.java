@@ -86,8 +86,8 @@ public class UserController {
     // change MultipartFile to byte[]
     byte[] imageByteArray = imageBytes.getBytes();
 
-    String imageUrl = userService.uploadChatImage(imageByteArray,senderUserId,receiverUserId);
-    return ResponseEntity.ok(imageUrl);
+    String imageRef = userService.uploadChatImage(imageByteArray,senderUserId,receiverUserId);
+    return ResponseEntity.ok(imageRef);
   }
 
 }
