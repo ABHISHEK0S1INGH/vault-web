@@ -1,11 +1,13 @@
 package vaultWeb.services;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import vaultWeb.exceptions.DuplicateUsernameException;
 import vaultWeb.models.User;
+import vaultWeb.repositories.ChatImageRepo;
 import vaultWeb.repositories.UserRepository;
 
 /**
@@ -64,5 +66,15 @@ public class UserService {
    */
   public List<User> getAllUsers() {
     return userRepository.findAll();
+  }
+  private final ChatImageRepo chatImageRepo;
+
+  public String uploadChatImage(byte[] imageBytes, Integer senderUserId, Integer receiverUserId){
+    // Use native insert with explicit bytea cast to avoid driver/type mismatch issues
+
+    OffsetDateTime createdon = OffsetDateTime.now();
+    chatImageRepo.saveImage(imageBytes, senderUserId, receiverUserId, createdon);
+
+    return "Image uploaded successfully";
   }
 }

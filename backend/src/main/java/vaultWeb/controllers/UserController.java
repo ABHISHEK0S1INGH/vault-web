@@ -7,6 +7,7 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import vaultWeb.dtos.user.UserDto;
 import vaultWeb.dtos.user.UserResponseDto;
 import vaultWeb.models.User;
@@ -74,4 +75,19 @@ public class UserController {
         userService.getAllUsers().stream().map(UserResponseDto::new).toList();
     return ResponseEntity.ok(users);
   }
+
+  @PostMapping("/upload-image")
+  @Operation(
+          summary = "Upload Chat Image",
+          description = "Uploads an image to be used in chat messages.")
+  public ResponseEntity<String> uploadChatImage(@RequestParam("image") MultipartFile imageBytes, @RequestParam Integer senderUserId,
+                                                @RequestParam Integer receiverUserId) throws Exception {
+
+    // change MultipartFile to byte[]
+    byte[] imageByteArray = imageBytes.getBytes();
+
+    String imageUrl = userService.uploadChatImage(imageByteArray,senderUserId,receiverUserId);
+    return ResponseEntity.ok(imageUrl);
+  }
+
 }
