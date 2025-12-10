@@ -3,7 +3,11 @@ package vaultWeb.controllers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -12,10 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vaultWeb.services.ChatImageService;
-import org.springframework.beans.factory.annotation.Value;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 @RestController
 @RequestMapping("/api/chat")
@@ -24,6 +24,7 @@ import java.util.Set;
 public class ChatImageController {
 
   private final ChatImageService chatImageService;
+
   @Value("${vault.chatImage.maxSizeBytes:5242880}") // default 5 MB
   private long maxFileSizeBytes;
 

@@ -38,10 +38,12 @@ public class ChatImageService {
 
     userRepository
         .findById(Long.valueOf(senderUserId))
-        .orElseThrow(() -> new UserNotFoundException("Sender with id " + senderUserId + " not found"));
+        .orElseThrow(
+            () -> new UserNotFoundException("Sender with id " + senderUserId + " not found"));
     userRepository
         .findById(Long.valueOf(receiverUserId))
-        .orElseThrow(() -> new UserNotFoundException("Receiver with id " + receiverUserId + " not found"));
+        .orElseThrow(
+            () -> new UserNotFoundException("Receiver with id " + receiverUserId + " not found"));
 
     OffsetDateTime createdon = OffsetDateTime.now();
     Long ref = chatImageRepo.saveImage(imageBytes, senderUserId, receiverUserId, createdon);

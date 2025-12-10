@@ -2,14 +2,11 @@ package vaultWeb.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 import vaultWeb.dtos.user.UserDto;
 import vaultWeb.dtos.user.UserResponseDto;
 import vaultWeb.models.User;
@@ -77,5 +74,4 @@ public class UserController {
         userService.getAllUsers().stream().map(UserResponseDto::new).toList();
     return ResponseEntity.ok(users);
   }
-
 }
