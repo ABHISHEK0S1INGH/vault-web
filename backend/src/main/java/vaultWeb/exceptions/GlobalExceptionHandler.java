@@ -117,7 +117,9 @@ public class GlobalExceptionHandler {
   /** Handles MaxUploadSizeExceededException (multipart too large) and returns 400 Bad Request. */
   @ExceptionHandler(MaxUploadSizeExceededException.class)
   public ResponseEntity<String> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("File too large: " + ex.getMessage());
+    // Provide a concise, user-friendly message without exposing internal details
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        .body("File size exceeds the maximum allowed limit of 5MB");
   }
 
   /** Handles any other RuntimeException and returns 500 Internal Server Error. */

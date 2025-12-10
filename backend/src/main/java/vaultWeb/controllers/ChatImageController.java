@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -16,14 +17,19 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import vaultWeb.services.ChatImageService;
+import vaultWeb.services.auth.AuthService;
+import vaultWeb.models.User;
+import vaultWeb.dtos.ChatImageUploadResponse;
 
 @RestController
 @RequestMapping("/api/chat")
 @Tag(name = "Chat Image Controller", description = "Handles image uploads for chat messages")
 @RequiredArgsConstructor
+@Slf4j
 public class ChatImageController {
 
   private final ChatImageService chatImageService;
+  private final AuthService authService;
 
   @Value("${vault.chatImage.maxSizeBytes:5242880}") // default 5 MB
   private long maxFileSizeBytes;
@@ -39,33 +45,37 @@ public class ChatImageController {
    * sender/receiver users.
    *
    * @param imageFile the uploaded multipart image file (field name: {@code image})
-   * @param senderUserId the ID of the sending user (must not be null)
+   * The sender is derived from the currently authenticated user; clients must NOT provide it.
+   *
    * @param receiverUserId the ID of the receiving user (must not be null)
-   * @return a 200 OK response containing an implementation-specific image reference string
+   * @return a 200 OK response containing a structured JSON body with the new image ID
    * @throws IllegalArgumentException if the file is empty/invalid or if IDs are null
    */
   @PostMapping(value = "/upload-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
   @Operation(
       summary = "Upload Chat Image",
-      description = "Uploads an image to be used in chat messages.")
-  public ResponseEntity<String> uploadChatImage(
+      description = "Uploads an image to be used in chat messages. The sender is the currently authenticated user.")
+  public ResponseEntity<ChatImageUploadResponse> uploadChatImage(
       @RequestParam("image") MultipartFile imageFile,
-      @RequestParam Integer senderUserId,
       @RequestParam Integer receiverUserId) {
     try {
-      if (senderUserId == null) {
-        throw new IllegalArgumentException("senderUserId must not be null");
-      }
-      if (receiverUserId == null) {
-        throw new IllegalArgumentException("receiverUserId must not be null");
+      // Derive sender from the authenticated user
+      User currentUser = authService.getCurrentUser();
+      if (currentUser == null) {
+        return ResponseEntity.status(401)
+            .body(new ChatImageUploadResponse("Unauthorized: user is not authenticated", null));
       }
       validateImage(imageFile);
       byte[] imageByteArray = imageFile.getBytes();
-      String imageRef =
-          chatImageService.uploadChatImage(imageByteArray, senderUserId, receiverUserId);
-      return ResponseEntity.ok(imageRef);
+      Long imageId =
+          chatImageService.uploadChatImage(imageByteArray, currentUser.getId().intValue(), receiverUserId);
+      ChatImageUploadResponse body = new ChatImageUploadResponse("Image uploaded successfully", imageId);
+      return ResponseEntity.ok(body);
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      // Log the root cause for diagnostics while returning a stable, user-friendly message
+      log.error("Failed to read/process uploaded image file", e);
+      return ResponseEntity.status(500)
+          .body(new ChatImageUploadResponse("Failed to process image file", null));
     }
   }
 

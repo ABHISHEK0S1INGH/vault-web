@@ -24,11 +24,11 @@ public class ChatImageService {
    * @param imageBytes raw image bytes to store (already validated for size/type upstream)
    * @param senderUserId ID of the user sending the image (must not be null; must exist)
    * @param receiverUserId ID of the user receiving the image (must not be null; must exist)
-   * @return a human-readable reference string that includes the generated image record ID
+   * @return the generated image record ID
    * @throws IllegalArgumentException if either user ID is null
    * @throws UserNotFoundException if either the sender or receiver cannot be found
    */
-  public String uploadChatImage(byte[] imageBytes, Integer senderUserId, Integer receiverUserId) {
+  public Long uploadChatImage(byte[] imageBytes, Integer senderUserId, Integer receiverUserId) {
     if (senderUserId == null) {
       throw new IllegalArgumentException("senderUserId must not be null");
     }
@@ -47,6 +47,6 @@ public class ChatImageService {
 
     OffsetDateTime createdon = OffsetDateTime.now();
     Long ref = chatImageRepo.saveImage(imageBytes, senderUserId, receiverUserId, createdon);
-    return "Image uploaded successfully with ref ID: " + ref;
+    return ref;
   }
 }
