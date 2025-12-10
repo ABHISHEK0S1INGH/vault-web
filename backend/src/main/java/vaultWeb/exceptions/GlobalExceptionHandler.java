@@ -1,12 +1,14 @@
 package vaultWeb.exceptions;
 
 import java.nio.file.AccessDeniedException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.util.unit.DataSize;
 import vaultWeb.exceptions.notfound.GroupNotFoundException;
 import vaultWeb.exceptions.notfound.NotMemberException;
 import vaultWeb.exceptions.notfound.UserNotFoundException;
@@ -118,8 +120,12 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(MaxUploadSizeExceededException.class)
   public ResponseEntity<String> handleMaxUploadSize(MaxUploadSizeExceededException ex) {
     // Provide a concise, user-friendly message without exposing internal details
-    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-        .body("File size exceeds the maximum allowed limit of 5MB");
+    String sizeLabel = resolveConfiguredMaxUploadSizeLabel();
+    String message =
+        (sizeLabel != null)
+            ? "File size exceeds the maximum allowed limit of " + sizeLabel
+            : "File size exceeds the maximum allowed limit";
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
   }
 
   /** Handles any other RuntimeException and returns 500 Internal Server Error. */
@@ -127,5 +133,32 @@ public class GlobalExceptionHandler {
   public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
         .body("Internal error: " + ex.getMessage());
+  }
+
+  // --- Helpers ---
+
+  @Value("${spring.servlet.multipart.max-file-size:}")
+  private String maxUploadSizeProp;
+
+  private String resolveConfiguredMaxUploadSizeLabel() {
+    try {
+      if (maxUploadSizeProp == null || maxUploadSizeProp.isBlank()) {
+        return null;
+      }
+      DataSize size = DataSize.parse(maxUploadSizeProp.trim());
+      long bytes = size.toBytes();
+      // Prefer MB if evenly divisible, then KB, otherwise bytes
+      long mb = bytes / (1024 * 1024);
+      if (mb > 0 && (bytes % (1024 * 1024) == 0)) {
+        return mb + "MB";
+      }
+      long kb = bytes / 1024;
+      if (kb > 0 && (bytes % 1024 == 0)) {
+        return kb + "KB";
+      }
+      return bytes + "B";
+    } catch (Exception e) {
+      return null; // Fallback to generic message on parse issues
+    }
   }
 }

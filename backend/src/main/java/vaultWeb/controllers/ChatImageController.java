@@ -65,8 +65,7 @@ public class ChatImageController {
         return ResponseEntity.status(401)
             .body(new ChatImageUploadResponse("Unauthorized: user is not authenticated", null));
       }
-      validateImage(imageFile);
-      byte[] imageByteArray = imageFile.getBytes();
+      byte[] imageByteArray = validateAndReadImage(imageFile);
       Long imageId =
           chatImageService.uploadChatImage(imageByteArray, currentUser.getId().intValue(), receiverUserId);
       ChatImageUploadResponse body = new ChatImageUploadResponse("Image uploaded successfully", imageId);
@@ -79,7 +78,7 @@ public class ChatImageController {
     }
   }
 
-  private void validateImage(MultipartFile file) {
+  private byte[] validateAndReadImage(MultipartFile file) throws IOException {
     if (file == null || file.isEmpty()) {
       throw new IllegalArgumentException("Image file cannot be empty");
     }
@@ -87,10 +86,50 @@ public class ChatImageController {
       throw new IllegalArgumentException("Image file too large");
     }
 
-    String contentType = file.getContentType();
+    // Read the bytes only once and validate using magic bytes (server-side detection)
+    byte[] bytes = file.getBytes();
+
+    String detectedMime = detectMimeType(bytes);
     Set<String> allowed = new HashSet<>(Arrays.asList(allowedMimeTypesProp.split(",")));
-    if (contentType == null || !allowed.contains(contentType)) {
-      throw new IllegalArgumentException("Unsupported image type. Allowed: " + allowed);
+    if (detectedMime == null || !allowed.contains(detectedMime)) {
+      throw new IllegalArgumentException(
+          "Unsupported image type. Detected: " + detectedMime + ". Allowed: " + allowed);
     }
+
+    return bytes;
+  }
+
+  // Very small, fast signature checks for common image formats
+  private String detectMimeType(byte[] bytes) {
+    if (bytes == null || bytes.length < 12) {
+      return null;
+    }
+
+    // JPEG: FF D8 FF
+    if ((bytes[0] & 0xFF) == 0xFF && (bytes[1] & 0xFF) == 0xD8 && (bytes[2] & 0xFF) == 0xFF) {
+      return "image/jpeg";
+    }
+
+    // PNG: 89 50 4E 47 0D 0A 1A 0A
+    if ((bytes[0] & 0xFF) == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47
+        && bytes[4] == 0x0D && bytes[5] == 0x0A && bytes[6] == 0x1A && bytes[7] == 0x0A) {
+      return "image/png";
+    }
+
+    // GIF: "GIF87a" or "GIF89a"
+    if (bytes.length >= 6) {
+      String sig = new String(bytes, 0, 6);
+      if ("GIF87a".equals(sig) || "GIF89a".equals(sig)) {
+        return "image/gif";
+      }
+    }
+
+    // WEBP: RIFF....WEBP
+    if (bytes[0] == 'R' && bytes[1] == 'I' && bytes[2] == 'F' && bytes[3] == 'F'
+        && bytes[8] == 'W' && bytes[9] == 'E' && bytes[10] == 'B' && bytes[11] == 'P') {
+      return "image/webp";
+    }
+
+    return null;
   }
 }
